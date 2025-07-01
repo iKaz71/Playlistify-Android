@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "556404604439",
+    "firebase_url": "https://playlistify-f1a04-default-rtdb.firebaseio.com",
+    "project_id": "playlistify-f1a04",
+    "storage_bucket": "playlistify-f1a04.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556404604439:android:e8030d9265c31be739a652",
+        "android_client_info": {
+          "package_name": "com.kaz.playlistify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556404604439-vo1r2io203dmmc44jb6vegkaenkrkg94.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kaz.playlistify",
+            "certificate_hash": "506a44b5bad2e593d3327a441953ed0d8daecdea"
+          }
+        },
+        {
+          "client_id": "556404604439-gdc5dlumdj844feicoff9ng88eru9o91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv4BjcC1PdMSkf_JacgNiwDOTtou_HHRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556404604439-gdc5dlumdj844feicoff9ng88eru9o91.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "556404604439-70ceilel77nvosumgas6j3v0sgpgo5sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mx.iKaz.playlistyfy"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556404604439:android:5a014b88e3232e8139a652",
+        "android_client_info": {
+          "package_name": "com.kaz.tvplaylistify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556404604439-pogotovhu7efv52e37ji80bt5n05kcgs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kaz.tvplaylistify",
+            "certificate_hash": "506a44b5bad2e593d3327a441953ed0d8daecdea"
+          }
+        },
+        {
+          "client_id": "556404604439-gdc5dlumdj844feicoff9ng88eru9o91.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCv4BjcC1PdMSkf_JacgNiwDOTtou_HHRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556404604439-gdc5dlumdj844feicoff9ng88eru9o91.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "556404604439-70ceilel77nvosumgas6j3v0sgpgo5sj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mx.iKaz.playlistyfy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

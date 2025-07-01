@@ -67,3 +67,58 @@ Prueba en un Android real para evitar problemas de permisos/red/cámara.
 
 No está recomendado en emulador.
 
+
+## 📸 Capturas de Pantalla
+
+### Bienvenida
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b2def7a2-8c35-4708-ae43-62d8d0918098" alt="Bienvenida 1" width="220"/>
+  <img src="https://github.com/user-attachments/assets/59cfa098-e8bd-48a2-9d0e-347c610cf243" alt="Bienvenida 2" width="220"/>
+</div>
+
+
+---
+
+### Sala principal & Buscador de canciones
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/317de155-436f-47d1-aaaa-8327904cc9da" alt="Sala principal 1" width="180"/>
+  <img src="https://github.com/user-attachments/assets/f22d37c8-0a08-464d-a1e2-1c3124bde44c" alt="Sala principal 3" width="180"/>
+  <img src="https://github.com/user-attachments/assets/0d76dacf-9382-42fb-a756-b9cee2abf597" alt="Sala principal 2" width="180"/>
+  
+  <img src="https://github.com/user-attachments/assets/c2584fa1-831b-42ab-bd1d-df9d365c3914" alt="Buscador 1" width="180"/>
+  <img src="https://github.com/user-attachments/assets/f7e3b14f-76ab-4dd6-a478-02d41088d248" alt="Buscador 2" width="180"/>
+  <img src="https://github.com/user-attachments/assets/6f3495e8-06c4-405c-88f6-66e7798c3d09" alt="Buscador 3" width="180"/>
+  <img src="https://github.com/user-attachments/assets/8c718ef2-b8ee-4a45-8c83-33b802d0d996" alt="Buscador 4" width="180"/>
+  <img src="https://github.com/user-attachments/assets/a2b92823-6e92-41ca-a468-10e80214ec10" alt="Buscador 5" width="180"/>
+
+</div>
+
+
+
+---
+
+## 📒 Notas Importantes
+
+- **No compartas ni subas tus claves API.**
+
+- La app está en pruebas continuas y se espera mejorar para futuras versiones (soporte Android, features, etc.).
+
+---
+
+## 📝 Licencia
+
+Playlistify se publica bajo la **licencia MIT**.  
+Puedes modificar y usar el código, pero no se ofrece garantía ni soporte oficial.
+
+---
+
+## 🔧 Configuración del Backend
+
+El backend es un servidor **Node.js/Express + Firebase**.  
+El endpoint por default apunta a Railway.  
+
+
+---
+

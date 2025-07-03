@@ -99,6 +99,46 @@ No está recomendado en emulador.
 
 ---
 
+## 🛠️ Tecnologías y librerías utilizadas
+
+Playlistify Android aprovecha lo mejor del ecosistema Android moderno para ofrecer una experiencia fluida, rápida y segura:
+
+- **Lenguaje principal:** Kotlin
+- **SDK:**  
+  - *compileSdk:* 35  
+  - *minSdk:* 24 (Android 7.0)  
+  - *targetSdk:* 35  
+- **Interfaz de usuario:** Jetpack Compose (Material 2 y Material 3)
+- **Navegación:** Navigation Compose
+- **Carga de imágenes:** Coil
+- **Escaneo de códigos QR y cámara:** CameraX + MLKit
+- **Persistencia y datos en tiempo real:**  
+  - Firebase Auth  
+  - Firebase Database  
+  - Firebase Firestore  
+  - DataStore Preferences
+- **Google Sign-In:** Integración para login opcional
+- **Red/API:** Retrofit, OkHttp, Gson
+- **Material Design:** Material clásico y Material 3
+- **Coroutines:** Para programación asíncrona moderna
+- **Testing:** JUnit, Espresso, Compose UI Testing
+- **SplashScreen:** Core Splashscreen para animación de inicio
+
+> **Plugins principales:**  
+> - `com.android.application`  
+> - `org.jetbrains.kotlin.android`  
+> - `org.jetbrains.kotlin.plugin.compose`  
+> - `com.google.gms.google-services`
+
+**Notas técnicas:**
+- Utiliza Java 11 para máxima compatibilidad con librerías modernas.
+- Las claves de API necesarias (`YOUTUBE_API_KEY`, `GOOGLE_CLIENT_ID`) se configuran de forma segura en el archivo `local.properties` y se inyectan vía Gradle, evitando exponerlas en el código fuente.
+- Es necesario agregar el archivo `google-services.json` (obtenido desde Firebase Console) en la carpeta `/app` para la integración de Firebase.
+
+---
+
+
+
 ## 📒 Notas Importantes
 
 - **No compartas ni subas tus claves API.**
@@ -114,11 +154,20 @@ Puedes modificar y usar el código, pero no se ofrece garantía ni soporte ofici
 
 ---
 
-## 🔧 Configuración del Backend
+## 🔧 Backend/API
 
 El backend es un servidor **Node.js/Express + Firebase**.  
-El endpoint por default apunta a Railway.  
+La app TV conecta automáticamente con el endpoint de producción por default.
 
+- [Repositorio backend](https://github.com/iKaz71/playlistify-api)
+
+---
+
+## 🚀 Ecosistema Playlistify
+
+- [Playlistify Android](https://github.com/iKaz71/Playlistify-Android)
+- [Playlistify iOS](https://github.com/iKaz71/Playlistify-iOS)
+- [TV Playlistify](https://github.com/iKaz71/TvPlaylistify)
 
 ---
 

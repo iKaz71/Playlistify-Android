@@ -51,6 +51,7 @@ Crea un archivo local.properties en la raíz del proyecto con las siguientes var
 - Además, debes agregar tu archivo google-services.json (descargado desde Firebase Console) dentro de la carpeta app/.
 
 ⚠️ No compartas ni subas tus claves reales o archivos sensibles al repositorio.
+⚠️ No olvides colocar tambien tu archivo de Google-Service.json en la raiz
 
 ### 3. Instala las dependencias
 Abre el proyecto en Android Studio Flamingo (2022.2.1) o superior.

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -21,7 +22,8 @@ fun MenuBottomSheet(
     onDismiss: () -> Unit,
     onCambiarNombre: () -> Unit,
     onLoginGoogle: (() -> Unit)? = null,
-    onEscanearQR: (() -> Unit)? = null,
+    // CAMBIO: reemplaza onEscanearQR por onIntroducirPalabraSecreta
+    onIntroducirPalabraSecreta: (() -> Unit)? = null,
     onCerrarSesion: (() -> Unit)? = null,
     onSalirSala: () -> Unit
 ) {
@@ -34,7 +36,7 @@ fun MenuBottomSheet(
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         dragHandle = null
     ) {
-        // HEADER: Usuario + boton cerrar
+        // HEADER: Usuario + botón cerrar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -43,7 +45,7 @@ fun MenuBottomSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                Text(nombreUsuario, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, fontSize = 18.sp, color = Color.White)
+                Text(nombreUsuario, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
                 Text(rol, color = Color(0xFFAAAAAA), fontSize = 14.sp)
                 emailUsuario?.let {
                     Text(it, color = Color(0xFFBBBBBB), fontSize = 13.sp)
@@ -57,13 +59,19 @@ fun MenuBottomSheet(
         Divider(color = Color(0x22FFFFFF))
 
         MenuItem("Cambiar nombre") { onCambiarNombre(); onDismiss() }
+
         if (onLoginGoogle != null) {
             MenuItem("Iniciar sesión con Google") { onLoginGoogle(); onDismiss() }
         }
 
-        if (onEscanearQR != null) {
-            MenuItem("Escanear QR para ser Admin") { onEscanearQR(); onDismiss() }
+        // CAMBIO: nuevo ítem para introducir palabra secreta
+        if (onIntroducirPalabraSecreta != null) {
+            MenuItem("Introducir palabra secreta") {
+                onIntroducirPalabraSecreta()
+                onDismiss()
+            }
         }
+
         if (onCerrarSesion != null) {
             MenuItem("Cerrar sesión Google") { onCerrarSesion(); onDismiss() }
         }

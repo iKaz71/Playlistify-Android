@@ -1,6 +1,7 @@
 package com.kaz.playlistify.ui.screens.common
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,14 +27,6 @@ import com.google.android.gms.common.api.ApiException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import com.kaz.playlistify.ui.screens.components.BusquedaYT
-import com.kaz.playlistify.ui.screens.components.QRScanner
-import kotlinx.coroutines.launch
-import com.kaz.playlistify.api.RetrofitInstance
-import android.widget.Toast
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import com.kaz.playlistify.ui.screens.components.ColaDeCanciones
 import com.kaz.playlistify.ui.screens.components.ConfirmDialog
 import com.kaz.playlistify.ui.screens.components.NowPlayingCard
@@ -42,8 +35,12 @@ import com.kaz.playlistify.ui.screens.components.SalaTopBar
 import com.kaz.playlistify.util.NombreDialog
 import com.kaz.playlistify.ui.screens.components.MenuBottomSheet
 import com.kaz.playlistify.BuildConfig
-import com.kaz.playlistify.util.NetworkStatus
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
+// NUEVO: diálogo para introducir palabra secreta
+import com.kaz.playlistify.ui.screens.components.AdminSecretDialog
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -66,24 +63,12 @@ fun SalaScreen(
     var mostrarDialogoNombre by remember { mutableStateOf(false) }
     var confirmarCerrarSesionGoogle by remember { mutableStateOf(false) }
     var confirmarSalirSala by remember { mutableStateOf(false) }
-    var mostrarEscanerQR by remember { mutableStateOf(false) }
+
+    // NUEVO: estado para el diálogo de palabra secreta
+    var showSecretDialog by remember { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     var swipeRefreshId by remember { mutableStateOf(0) }
-
-
-
-    // Permiso cámara
-    var solicitarPermisoCamara by remember { mutableStateOf(false) }
-    val cameraPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            mostrarEscanerQR = true
-        } else {
-            Toast.makeText(context, "Se requiere permiso de cámara para escanear QR", Toast.LENGTH_LONG).show()
-        }
-        solicitarPermisoCamara = false
-    }
 
     val nombresHawaianos = listOf(
         "Luau", "Lani", "Moana", "Hoku", "Makani", "Nalu", "Pua", "Lilo", "Koa",
@@ -128,7 +113,7 @@ fun SalaScreen(
                     nombre = nombreUsuario,
                     dispositivo = "android",
                     rol = rolFinal,
-                    api = RetrofitInstance.playlistifyApi
+                    api = com.kaz.playlistify.api.RetrofitInstance.playlistifyApi
                 )
                 if (res.isFailure) {
                     Log.e("SalaScreen", "Registro usuario fallido: ${res.exceptionOrNull()?.message}")
@@ -201,18 +186,6 @@ fun SalaScreen(
         val ref = FirebaseDatabase.getInstance().getReference("sessions")
         ref.child(sessionId).child("code").get().addOnSuccessListener {
             codigoSala.value = it.getValue(String::class.java) ?: "----"
-        }
-    }
-
-    if (solicitarPermisoCamara) {
-        val permissionCheck = ContextCompat.checkSelfPermission(context, android.Manifest.permission.CAMERA)
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            mostrarEscanerQR = true
-            solicitarPermisoCamara = false
-        } else {
-            LaunchedEffect(Unit) {
-                cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-            }
         }
     }
 
@@ -296,6 +269,7 @@ fun SalaScreen(
         }
     }
 
+    // Dialogo para cambiar nombre
     NombreDialog(
         visible = mostrarDialogoNombre,
         currentName = nombreUsuario,
@@ -307,6 +281,7 @@ fun SalaScreen(
         }
     )
 
+    // Menú inferior
     MenuBottomSheet(
         visible = showMenuSheet.value,
         nombreUsuario = nombreUsuario,
@@ -325,17 +300,32 @@ fun SalaScreen(
                 googleSignInLauncher.launch(signInIntent)
             }
         } else null,
-        onEscanearQR = if (
+        // REEMPLAZO: antes onEscanearQR -> ahora onIntroducirPalabraSecreta
+        onIntroducirPalabraSecreta = if (
             userGoogle.value != null &&
             rol.value.lowercase() == "invitado"
         ) {
-            { mostrarEscanerQR = true }
+            {
+                // Validar que haya UID antes de abrir el diálogo
+                val uid = SessionManager.obtenerUid(context)
+                    ?: FirebaseAuth.getInstance().currentUser?.uid
+
+                if (uid.isNullOrEmpty()) {
+                    Toast.makeText(
+                        context,
+                        "Inicia sesión con Google antes de convertirte en admin.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    showSecretDialog = true
+                }
+            }
         } else null,
         onCerrarSesion = if (userGoogle.value != null) { { confirmarCerrarSesionGoogle = true } } else null,
         onSalirSala = { confirmarSalirSala = true }
     )
 
-
+    // Hoja de búsqueda
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
@@ -352,6 +342,7 @@ fun SalaScreen(
         }
     }
 
+    // Confirmaciones
     ConfirmDialog(
         visible = confirmarCerrarSesionGoogle,
         title = "¿Cerrar sesión de Google?",
@@ -379,44 +370,24 @@ fun SalaScreen(
         onDismiss = { confirmarSalirSala = false }
     )
 
-    if (mostrarEscanerQR) {
-        QRScanner(
-            onResult = { qrContent ->
-                mostrarEscanerQR = false
-                if (qrContent == sessionId) {
-                    val uid = SessionManager.obtenerUid(context)
-                        ?: FirebaseAuth.getInstance().currentUser?.uid
-                    if (uid.isNullOrEmpty()) {
-                        Toast.makeText(
-                            context,
-                            "Inicia sesión con Google antes de ascender a anfitrión.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        return@QRScanner
-                    }
-                    coroutineScope.launch {
-                        val result = UserRepository.ascenderAAnfitrionPersistente(
-                            sessionId,
-                            uid,
-                            RetrofitInstance.playlistifyApi
-                        )
-                        result.onSuccess {
-                            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                        }.onFailure {
-                            Toast.makeText(context, it.message ?: "Error desconocido", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
-                    Toast.makeText(context, "QR inválido", Toast.LENGTH_SHORT).show()
-                }
+    // NUEVO: diálogo de palabra secreta (sólo cuando se solicita)
+    if (showSecretDialog) {
+        val uid = SessionManager.obtenerUid(context)
+            ?: FirebaseAuth.getInstance().currentUser?.uid
+            ?: ""
+
+        AdminSecretDialog(
+            sessionId = sessionId,
+            uid = uid,
+            onSuccess = { msg ->
+                Toast.makeText(context, msg.ifBlank { "Listo, ahora eres admin" }, Toast.LENGTH_SHORT).show()
+                showSecretDialog = false
+                // El listener de Firebase ya actualizará 'rol' cuando el backend lo refleje
             },
-            onCancel = {
-                mostrarEscanerQR = false
-            }
+            onError = { msg ->
+                Toast.makeText(context, msg.ifBlank { "No se pudo otorgar admin" }, Toast.LENGTH_SHORT).show()
+            },
+            onDismiss = { showSecretDialog = false }
         )
     }
 }
-
-
-
-

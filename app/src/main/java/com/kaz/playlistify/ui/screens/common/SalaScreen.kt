@@ -248,21 +248,25 @@ fun SalaScreen(
             Text("En cola:", style = MaterialTheme.typography.titleLarge, color = Color.White)
             Spacer(modifier = Modifier.height(8.dp))
 
+            val isAdmin = rol.value.equals("admin", ignoreCase = true)
+
             ColaDeCanciones(
                 canciones = cancionesEnCola,
                 orderedPushKeys = orderedPushKeys,
                 currentlyPlayingPushKey = currentlyPlayingPushKey,
                 swipeRefreshId = swipeRefreshId,
-                onEliminarCancion = { pushKey ->
-                    FirebaseQueueManager.eliminarCancion(sessionId, pushKey)
-                },
+                onEliminarCancion = { pushKey -> FirebaseQueueManager.eliminarCancion(sessionId, pushKey) },
                 onPlayNext = { pushKey, onFinish ->
-                    FirebaseQueueManager.playNext(
-                        sessionId,
-                        pushKey,
-                        onSuccess = { onFinish() },
-                        onError = { onFinish() }
-                    )
+                    if (isAdmin) {
+                        FirebaseQueueManager.playNext(sessionId, pushKey, onSuccess = { onFinish() }, onError = { onFinish() })
+                    } else {
+                        Toast.makeText(context, "Solo el admin puede usar Play Next", Toast.LENGTH_SHORT).show()
+                        onFinish()
+                    }
+                },
+                canPlayNext = isAdmin,
+                onPlayNextNotAllowed = {
+                    Toast.makeText(context, "Solo el admin puede usar Play Next", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.weight(1f, fill = false)
             )

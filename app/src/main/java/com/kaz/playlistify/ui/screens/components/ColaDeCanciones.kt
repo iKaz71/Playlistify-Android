@@ -17,13 +17,12 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kaz.playlistify.model.CancionEnCola
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -34,6 +33,9 @@ fun ColaDeCanciones(
     swipeRefreshId: Int,
     onEliminarCancion: (String) -> Unit,
     onPlayNext: (String, () -> Unit) -> Unit,
+    // NUEVO: sólo admin puede Play Next
+    canPlayNext: Boolean,
+    onPlayNextNotAllowed: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var playNextDialogPushKey by remember { mutableStateOf<String?>(null) }
@@ -53,27 +55,36 @@ fun ColaDeCanciones(
             ) { _, cancionEnCola ->
                 val cancion = cancionEnCola.cancion
                 val pushKey = cancionEnCola.pushKey
-                val positionInOrder = orderedPushKeys
+                val indexSinActual = orderedPushKeys
                     .filter { it != currentlyPlayingPushKey }
-                    .indexOf(pushKey)
+                val positionInOrder = indexSinActual.indexOf(pushKey)
                 if (positionInOrder == -1) return@itemsIndexed
 
-                val directions = if (positionInOrder == 0) {
-                    setOf(DismissDirection.EndToStart)
-                } else {
-                    setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart)
+                val allowPlayNext = canPlayNext && positionInOrder != 0
+
+                // Direcciones permitidas según permisos:
+                val directions: Set<DismissDirection> = when {
+                    positionInOrder == 0 -> setOf(DismissDirection.EndToStart) // sólo eliminar
+                    else -> buildSet {
+                        add(DismissDirection.EndToStart) // eliminar
+                        if (allowPlayNext) add(DismissDirection.StartToEnd) // play next sólo admin
+                    }
                 }
 
                 val dismissState = rememberDismissState(
                     confirmStateChange = { dismissValue ->
                         when (dismissValue) {
-                            DismissValue.DismissedToEnd -> {
+                            DismissValue.DismissedToEnd -> { // StartToEnd
                                 if (positionInOrder != 0) {
-                                    playNextDialogPushKey = pushKey
+                                    if (canPlayNext) {
+                                        playNextDialogPushKey = pushKey
+                                    } else {
+                                        onPlayNextNotAllowed?.invoke()
+                                    }
                                 }
                                 false
                             }
-                            DismissValue.DismissedToStart -> {
+                            DismissValue.DismissedToStart -> { // EndToStart
                                 eliminarDialogPushKey = pushKey
                                 false
                             }
@@ -115,10 +126,10 @@ fun ColaDeCanciones(
                     state = dismissState,
                     directions = directions,
                     background = {
-                        val direction = dismissState.dismissDirection
-                        when (direction) {
+                        when (dismissState.dismissDirection) {
                             DismissDirection.StartToEnd -> {
-                                if (positionInOrder != 0) {
+                                // Mostrar acción sólo si está permitido
+                                if (allowPlayNext) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()

@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Features y permisos básicos -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -19,6 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Playlistify"
         tools:targetApi="31">
+
+        <!-- Main Activity (launcher) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,11 +29,35 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-    </application>
+        <!-- Share Receiver Activity (puente para recibir links) -->
+        <activity
+            android:name=".ui.share.ShareReceiverActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Playlistify.NoUi">
 
+            <!-- Acción de compartir un solo elemento -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/uri-list" />
+            </intent-filter>
+
+            <!-- Acción de compartir múltiples elementos -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/uri-list" />
+            </intent-filter>
+        </activity>
+
+    </application>
 </manifest>

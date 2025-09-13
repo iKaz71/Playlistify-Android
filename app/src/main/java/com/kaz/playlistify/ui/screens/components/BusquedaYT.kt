@@ -146,7 +146,7 @@ fun BusquedaYT(
 
         if (resultados.isEmpty()) {
             Text(
-                text = "Realiza una búsqueda para ver resultados.",
+                text = "Recuerda que puedes compartir una canción directamente en la App de YT a Playlistify",
                 color = Color.LightGray,
                 modifier = Modifier
                     .fillMaxWidth()

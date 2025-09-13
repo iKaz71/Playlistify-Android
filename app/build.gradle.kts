@@ -117,6 +117,9 @@ dependencies {
     implementation ("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.compose.material:material-icons-extended")
 
+    implementation("androidx.activity:activity-ktx:1.9.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
 }
 
 apply(plugin = "com.google.gms.google-services")

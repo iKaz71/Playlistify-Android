@@ -7,17 +7,47 @@
   <title>Playlistify — Descarga APK</title>
   <link rel="icon" href="data:," />
   <style>
-    body { font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Arial; margin: 0; background:#0f1115; color:#e6e6e6; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 28px; }
-    .card { background:#151923; border:1px solid #242b3a; border-radius:18px; padding:24px; box-shadow:0 8px 30px rgba(0,0,0,.25);}
-    h1 { margin:0 0 8px; font-size:28px; }
-    .muted{color:#9aa3b2}
-    .btn { display:inline-block; padding:14px 18px; border-radius:12px; background:#5b8cff; color:#fff; text-decoration:none; font-weight:600 }
-    .grid{display:grid; gap:18px; grid-template-columns:1fr; }
-    .qr{ display:flex; align-items:center; gap:16px; flex-wrap:wrap }
-    canvas{ background:#fff; border-radius:12px; padding:8px }
-    code{background:#0b0e14;border:1px solid #242b3a;padding:4px 8px;border-radius:8px}
-    ul{margin:8px 0 0 18px}
+    :root {
+      --bg:#0f1115; --panel:#151923; --border:#242b3a; --text:#e6e6e6; --muted:#9aa3b2;
+      --primary:#5b8cff;
+    }
+    /* Ajustes móviles y overflow seguro */
+    *{ box-sizing:border-box }
+    html{ -webkit-text-size-adjust:100% }
+    body{ margin:0; background:var(--bg); color:var(--text); overflow-x:hidden }
+
+    .wrap{ max-width:720px; margin:0 auto; padding:20px 16px }
+    .card{
+      background:var(--panel); border:1px solid var(--border); border-radius:18px; padding:20px; margin:12px;
+      box-shadow:0 8px 30px rgba(0,0,0,.25);
+      overflow-wrap:anywhere; word-break:break-word;
+    }
+    h1{ margin:0 0 8px; font-size:clamp(22px, 5vw, 32px) }
+    .muted{ color:var(--muted); line-height:1.5 }
+
+    .btn{
+      display:inline-block; width:100%; text-align:center;
+      padding:14px 18px; border-radius:12px; background:var(--primary); color:#fff; text-decoration:none; font-weight:600
+    }
+
+    .grid{ display:grid; gap:18px; grid-template-columns:1fr }
+    .qr{ display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap }
+    .qr canvas{ width:160px; height:160px; max-width:100% }
+
+    /* Hash largo: que no rompa el layout */
+    code{
+      display:block; background:#0b0e14; border:1px solid var(--border);
+      padding:8px 10px; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.9rem; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-all; user-select:all;
+    }
+
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap }
+    .copy{
+      padding:8px 10px; border-radius:8px; border:1px solid var(--border);
+      background:#1b2130; color:#e6e6e6; cursor:pointer
+    }
+
+    ul{ margin:8px 0 0 18px }
   </style>
 </head>
 <body>
@@ -29,7 +59,8 @@
       </header>
 
       <p>
-        <a class="btn" id="dl" href="https://github.com/iKaz71/Playlistify-Android/releases/download/v1.0.0/playlistify-1.0.0.apk">
+        <a class="btn" id="dl" rel="noopener noreferrer" target="_self"
+           href="https://github.com/iKaz71/Playlistify-Android/releases/download/v1.0.0/playlistify-1.0.0.apk">
           Descargar APK
         </a>
       </p>
@@ -38,7 +69,8 @@
         <canvas id="qrc"></canvas>
         <div class="muted">
           Escanéalo para descargar desde tu teléfono.<br/>
-          Si es la primera vez: Ajustes → Apps → Acceso especial → <em>Instalar apps desconocidas</em> (elige tu navegador) → Permitir.
+          Si es la primera vez: Ajustes → Apps → Acceso especial →
+          <em>Instalar apps desconocidas</em> (elige tu navegador) → Permitir.
         </div>
       </div>
 
@@ -52,7 +84,10 @@
 
       <section class="muted">
         <div>SHA-256 (opcional para verificación):</div>
-        <code>92205228301166e0b400d513cfe0f24e86a3d7f682d576217fb49dd2a6d9c93</code>
+        <div class="row">
+          <code id="sha">92205228301166e0b400d513cfe0f24e86a3d7f682d576217fb49dd2a6d9c93</code>
+          <button class="copy" id="copy">Copiar</button>
+        </div>
       </section>
 
       <footer class="muted">
@@ -61,11 +96,19 @@
     </div>
   </div>
 
-  <!-- QR lib ligera -->
+  <!-- Librería ligera para QR -->
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <script>
+    // Genera el QR con el link del botón
     const url = document.getElementById('dl').href;
     new QRious({ element: document.getElementById('qrc'), value: url, size: 160 });
+
+    // Copiar SHA-256 al portapapeles
+    document.getElementById('copy')?.addEventListener('click', async () => {
+      const txt = document.getElementById('sha')?.innerText.trim();
+      try { await navigator.clipboard.writeText(txt); alert('SHA-256 copiado'); }
+      catch { prompt('Copia el SHA-256:', txt); }
+    });
   </script>
 </body>
 </html>
